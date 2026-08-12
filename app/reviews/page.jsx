@@ -5,6 +5,7 @@ const page = () => {
   <section className='sec_hero_bar py-6 md:py-10 '>
     <div className='container max-w-sitemax px-4 mx-auto '>
       <h1 className="text-2xl font-bold">Reviews page</h1>
+      
     </div>
   </section>
   )
