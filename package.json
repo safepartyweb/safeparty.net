@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build1": "next build",
-    "build": "next build --debug-prerender",
+    "build": "next build",
+    "build2": "next build --debug-prerender",
     "start": "next start -p 4000",
     "lint": "next lint"
   },
