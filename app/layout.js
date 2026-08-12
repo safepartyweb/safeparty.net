@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
       >
         <AuthProvider>
-          <ToastContainer />
+          {/* <ToastContainer /> */}
           <Navbar />
           <main>
             <LeadConnectorWidget />
