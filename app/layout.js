@@ -19,42 +19,33 @@ const geistMono = Geist_Mono({
 });
 
 
-// export const metadata = {
-//   title: 'Safe Party',
-//   description: '',
-//   icons: {
-//     icon: '/images/favicon.ico',
-//   },
-// };
+export const metadata = {
+  title: 'Safe Party',
+  description: '',
+  icons: {
+    icon: '/images/favicon.ico',
+  },
+};
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
+      >
+        <AuthProvider>
+          {/* <ToastContainer /> */}
+          <Navbar />
+          <main>
+            <LeadConnectorWidget />
+            {children}
+          </main>
+          <Footer />
+          
+        </AuthProvider>
+        
       </body>
     </html>
   );
 }
-
-// export default function RootLayout({ children }) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
-//       >
-//         <AuthProvider>
-//           {/* <ToastContainer /> */}
-//           <Navbar />
-//           <main>
-//             <LeadConnectorWidget />
-//             {children}
-//           </main>
-//           <Footer />
-          
-//         </AuthProvider>
-        
-//       </body>
-//     </html>
-//   );
-// }
