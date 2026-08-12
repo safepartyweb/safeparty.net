@@ -19,13 +19,13 @@ const geistMono = Geist_Mono({
 });
 
 
-export const metadata = {
-  title: 'Safe Party',
-  description: '',
-  icons: {
-    icon: '/images/favicon.ico',
-  },
-};
+// export const metadata = {
+//   title: 'Safe Party',
+//   description: '',
+//   icons: {
+//     icon: '/images/favicon.ico',
+//   },
+// };
 
 export default function RootLayout({ children }) {
   return (
