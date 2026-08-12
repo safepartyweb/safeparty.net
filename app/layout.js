@@ -27,25 +27,34 @@ export const metadata = {
   },
 };
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
-      >
-        <AuthProvider>
-          {/* <ToastContainer /> */}
-          <Navbar />
-          <main>
-            <LeadConnectorWidget />
-            {children}
-          </main>
-          <Footer />
-          
-        </AuthProvider>
-        
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );
 }
+
+// export default function RootLayout({ children }) {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
+//       >
+//         <AuthProvider>
+//           {/* <ToastContainer /> */}
+//           <Navbar />
+//           <main>
+//             <LeadConnectorWidget />
+//             {children}
+//           </main>
+//           <Footer />
+          
+//         </AuthProvider>
+        
+//       </body>
+//     </html>
+//   );
+// }
