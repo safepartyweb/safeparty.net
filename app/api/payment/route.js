@@ -1,7 +1,9 @@
 import connectMongo from "@/lib/db";
 import nodemailer from 'nodemailer'
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 
@@ -56,29 +58,13 @@ export async function POST(req) {
       try {
 
         // const emails = ['topconstruction68@proton.me','kkmarketing12@proton.me','wwmarketing68@protonmail.com','greenconstruction55@proton.me'];
-        const emails = ['mylashgirl@proton.me','theglamgoddess@proton.me','rawbeauty@proton.me'];
+        const emails = ['mylashgirl@proton.me','theglamgoddess@proton.me','rawbeauty@proton.me', 'thebrowbabe@proton.me'];
         const randomEmail = emails[Math.floor(Math.random() * emails.length)]
+
+        console.log("Email selected:", randomEmail)
   
         // Email content
         const subject = `Your Order #${order_id} - Payment Instructions`
-        
-        /*
-        const html = `
-          <p>Thank you for your order!</p>
-          <p>Please send an Interac e-Transfer of <strong>$${price_amount}</strong> to the following email:</p>
-          <h3>${randomEmail}</h3>
-          <p>Use your Order ID <strong>${order_id}</strong> as the message/reference.</p>
-
-          <p>Save our contact details as
-          * Name : Hair Products or Beauty Products 
-          * Email : ${randomEmail}
-          * Note Order number - ${order_id}
-          ${ discount ? 'Promo code : Save20' : '' }
-          
-          Warning : All illegal mentions will result in your account being banned.</p>
-          <p>We'll process your order once the payment is received.</p>
-        `
-        */
 
         const html = `
         <!DOCTYPE html>
@@ -302,6 +288,7 @@ export async function POST(req) {
                         >
                           Once payment is confirmed, we will begin processing your
                           order.
+                          Have questions or need assistance? Contact us at: safepartycontact@gmail.com.
                         </p>
                       </td>
                     </tr>
@@ -315,7 +302,7 @@ export async function POST(req) {
                           style="margin:0; color:#777777; font-size:12px; line-height:1.6;"
                         >
                           This is an automated payment instruction email. Please keep
-                          it for your records.
+                          it for your records. 
                         </p>
                       </td>
                     </tr>
@@ -330,22 +317,27 @@ export async function POST(req) {
 
   
         // Send email
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        })
-        console.log("Customer Email:", email)
-  
-        await transporter.sendMail({
-          from: `"Safe Party" <${process.env.EMAIL_USER}>`,
-          to: email,
-          // to: 'mahmud.online11@gmail.com',
+
+        const { data, error } = await resend.emails.send({
+          from: "Safe Party <no-reply@safeparty.net>",
+          // from: "Safe Party <onboarding@resend.dev>",
+          to: [email],
+          // to: "wwmarketing68@protonmail.com",
           subject,
           html,
-        })
+        });
+        
+        if (error) {
+          console.error("Resend error:", error);
+        
+          return NextResponse.json(
+            {
+              message: "Failed to send payment instructions",
+              error: error.message,
+            },
+            { status: 500 }
+          );
+        }
   
         return NextResponse.json({ message: 'Payment instructions sent', email: randomEmail })        
         

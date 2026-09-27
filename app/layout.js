@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
           <Footer />
           
         </AuthProvider>
-        
+        <ToastContainer />
       </body>
     </html>
   );
