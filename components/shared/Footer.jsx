@@ -25,7 +25,7 @@ const Footer = () => {
                     Psychedelics with Benefits. The next dimension in mind-body growth. Join our newsletter.
                   </p>
 
-                  <form className="flex w-full flex">
+                  <form className="w-full flex">
                     <input
                       type="email"
                       placeholder="Your e-mail address"

@@ -81,17 +81,13 @@ export default function CheckoutPage() {
         });
 
         const result = await res.json();
-        
-        console.log("Method Result:", result)
 
         if (!res.ok) {
           throw new Error(result.message || 'Failed to load shipping methods');
         }
 
-         
-
         const methods = result.methods || [];
-        const activeMethods = methods.filter(method => method.isActive)
+        const activeMethods = methods.filter(method => method.isActive);
 
         setShippingMethods(activeMethods);
 
@@ -126,16 +122,20 @@ export default function CheckoutPage() {
     let discountAmount = 0;
 
     if (data?.orders?.length === 0) {
-      // First order discount can be added here later.
       discountAmount = (calculated * 20) / 100;
     }
 
     setDiscount(discountAmount);
 
-    const selectedShippingPrice = Number(selectedShippingMethod?.price || 0);
+    let selectedShippingPrice = Number(selectedShippingMethod?.price || 0);
+
+    const amountBeforeShipping = calculated - discountAmount;
+    if (amountBeforeShipping >= 200) {
+      selectedShippingPrice = 0;
+    }
 
     setShipping(selectedShippingPrice);
-    setOrderPrice(calculated - discountAmount + selectedShippingPrice);
+    setOrderPrice(amountBeforeShipping + selectedShippingPrice);
   }, [cartItems, data, selectedShippingMethod]);
 
   const handleChange = (e) => {
@@ -187,7 +187,7 @@ export default function CheckoutPage() {
           shippingSnapshot: {
             name: selectedShippingMethod.name,
             shortNote: selectedShippingMethod.shortNote || "",
-            price: Number(selectedShippingMethod.price || 0),
+            price: Number(shipping),
             deliveryTime: selectedShippingMethod.deliveryTime || "",
           },
   
@@ -267,14 +267,12 @@ export default function CheckoutPage() {
     setShowPaymentOptions(false);
   };
 
-  // console.log("Checkout page data:",data)
-
   return (
     <div className="max-w-5xl mx-auto p-4 relative">
       {showLoader && <Loader />}
 
       {showOrderSuccess && (
-        <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-20 bg-white">
+        <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-25 bg-white">
           <div>
             <h1 className="text-xl font-bold text-center">
               Order successful!
@@ -369,8 +367,8 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 {shippingMethods.map((method) => {
                   const methodPrice = Number(method.price || 0);
-
                   const isSelected = selectedShippingMethodId === method._id;
+                  const qualifiesForFreeShipping = (subTotal - discount) >= 200;
 
                   return (
                     <label
@@ -401,7 +399,16 @@ export default function CheckoutPage() {
                             </h3>
 
                             <span className="font-bold text-siteBlack">
-                              ${methodPrice.toFixed(2)}
+                              {qualifiesForFreeShipping ? (
+                                <span className="flex items-center gap-2">
+                                  <span className="line-through text-gray-400 font-normal">
+                                    ${methodPrice.toFixed(2)}
+                                  </span>
+                                  <span className="text-green-600">FREE</span>
+                                </span>
+                              ) : (
+                                `$${methodPrice.toFixed(2)}`
+                              )}
                             </span>
                           </div>
 
@@ -476,7 +483,7 @@ export default function CheckoutPage() {
 
           {discount > 0 && (
             <div className="text-lg font-semibold flex justify-between">
-              <span>Discount:</span>
+              <span>Discount (First Order):</span>
               <span>${discount.toFixed(2)}</span>
             </div>
           )}
@@ -485,11 +492,17 @@ export default function CheckoutPage() {
             <span>
               Shipping:
               {selectedShippingMethod?.name
-                ? ` ${selectedShippingMethod.name}`
+                ? ` (${selectedShippingMethod.name})`
                 : ''}
             </span>
 
-            <span>${shipping.toFixed(2)}</span>
+            <span>
+              {shipping === 0 ? (
+                <span className="text-green-600 font-bold">FREE</span>
+              ) : (
+                `$${shipping.toFixed(2)}`
+              )}
+            </span>
           </div>
 
           {selectedShippingMethod?.deliveryTime && (
