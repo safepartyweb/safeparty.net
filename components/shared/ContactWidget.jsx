@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import { MessageCircle, X, Send } from 'lucide-react' // Or use any SVG/icons you prefer
+import { MessageCircle, X, Send } from 'lucide-react'
+import Image from 'next/image'
 
 const ContactWidget = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -26,7 +27,7 @@ const ContactWidget = () => {
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 text-gray-700 hover:text-green-600 transition font-medium text-sm"
           >
             <span className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">
-              WA
+              <Image src="/whatsapp.svg" width={32} height={32} alt="WhatsApp Icon" />
             </span>
             WhatsApp Chat
           </a>
@@ -39,7 +40,7 @@ const ContactWidget = () => {
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-blue-50 text-gray-700 hover:text-blue-600 transition font-medium text-sm"
           >
             <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-              SG
+              <Image src="/signal.svg" width={32} height={32} alt="WhatsApp Icon" />
             </span>
             Signal Chat
           </a>
