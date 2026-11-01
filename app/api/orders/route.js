@@ -20,18 +20,62 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get("page")) || 1;
   const limit = parseInt(searchParams.get("limit")) || 10;
+  const search = searchParams.get("search")?.trim() || "";
 
   try {
     const skip = (page - 1) * limit;
+    let query = {};
+
+    if (search) {
+      const searchRegex = new RegExp(search, "i");
+      const orConditions = [];
+
+      // 1. Check if search matches MongoDB _id
+      if (mongoose.Types.ObjectId.isValid(search)) {
+        orConditions.push({ _id: search });
+      }
+
+      // 2. Check custom order number fields (adjust 'orderNumber' or 'orderId' if named differently)
+      orConditions.push({ orderNumber: searchRegex });
+      orConditions.push({ orderId: searchRegex });
+
+      // 3. Check if search is a valid number for price/total amount
+      const searchNum = parseFloat(search);
+      if (!isNaN(searchNum)) {
+        orConditions.push({ totalPrice: searchNum });
+        orConditions.push({ itemsPrice: searchNum });
+      }
+
+      // 4. Check customer name or phone if stored in shipping address
+      orConditions.push({ "shippingAddress.name": searchRegex });
+      orConditions.push({ "shippingAddress.fullName": searchRegex });
+      orConditions.push({ "shippingAddress.phone": searchRegex });
+
+      // 5. Also check populated User model fields (Name or Email)
+      const matchingUsers = await User.find({
+        $or: [
+          { name: searchRegex },
+          { email: searchRegex },
+          { fullName: searchRegex }
+        ]
+      }).select("_id");
+
+      const userIds = matchingUsers.map((u) => u._id);
+      if (userIds.length > 0) {
+        orConditions.push({ user: { $in: userIds } });
+      }
+
+      query.$or = orConditions;
+    }
 
     const [orders, totalCount] = await Promise.all([
-      Order.find()
+      Order.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .populate("user")
         .populate("shippingMethod"),
-      Order.countDocuments(),
+      Order.countDocuments(query),
     ]);
 
     return NextResponse.json({
@@ -39,7 +83,7 @@ export async function GET(request) {
       orders,
       totalCount,
       currentPage: page,
-      totalPages: Math.ceil(totalCount / limit),
+      totalPages: Math.ceil(totalCount / limit) || 1,
     });
   } catch (error) {
     console.log("Error:", error);
@@ -168,7 +212,6 @@ export async function POST(req) {
       paymentMethod,
       userId,
       referredBy,
-      // discount,
     } = body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -218,9 +261,13 @@ export async function POST(req) {
       )
     : 0;  
 
-
     const taxPrice = 0;
-    const shippingPrice = round2(Number(selectedShippingMethod.price || 0));
+    let shippingPrice;
+    if (pricing.itemsPrice >= 200) {
+      shippingPrice = 0;
+    } else {
+      shippingPrice = round2(Number(selectedShippingMethod.price || 0));
+    }
     const totalPrice = round2(
       pricing.itemsPrice - discount + shippingPrice + taxPrice
     );
@@ -229,16 +276,13 @@ export async function POST(req) {
       user: userId,
       orderItems: pricing.validatedItems,
       shippingAddress,
-
       shippingMethod: selectedShippingMethod._id,
-
       shippingSnapshot: {
         name: selectedShippingMethod.name,
         shortNote: selectedShippingMethod.shortNote || "",
         price: shippingPrice,
         deliveryTime: selectedShippingMethod.deliveryTime || "",
       },
-
       paymentMethod: paymentMethod || "",
       itemsPrice: pricing.itemsPrice,
       shippingPrice,

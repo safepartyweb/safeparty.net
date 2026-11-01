@@ -7,6 +7,8 @@ import { useLogOutMutation } from "@/lib/api/authApi";
 import Image from "next/image";
 import { logout, setCredentials } from "@/store/authSlice";
 import { getSession, signOut as nextAuthSignOut } from "next-auth/react";
+import Bar from "../home/Bar";
+import AnnouncementSlider from "../home/AnnouncementSlider";
 
 export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -168,6 +170,16 @@ export default function Navbar() {
                   <Link href="/reviews">Reviews</Link>
                 </li>
 
+                <li className="text-center">
+                  <Link className="text-center w-full" href="/faq">
+                    FAQ
+                  </Link>
+                </li>
+
+
+
+
+{/* 
                 <li className="relative has_children group">
                   <div className="flex gap-1 items-center">
                     Support
@@ -193,7 +205,7 @@ export default function Navbar() {
                       </Link>
                     </li>
                   </ul>
-                </li>
+                </li> */}
               </nav>
               {/* End Desktop Nav */}
 
@@ -217,13 +229,8 @@ export default function Navbar() {
                 </li>
 
                 <li onClick={() => setIsMobileMenuOpen(false)}>
-                  <Link href="/about">About</Link>
+                  <Link href="/faq">Faq</Link>
                 </li>
-
-                <li onClick={() => setIsMobileMenuOpen(false)}>
-                  <Link href="/contact">Contact</Link>
-                </li>
-
                 {isAnyLoggedIn ? (
                   <>
                     {isCustomer && (
@@ -399,6 +406,9 @@ export default function Navbar() {
               />
             </div>
           </div>
+          <AnnouncementSlider />
+
+
         </div>
       </header>
     </>

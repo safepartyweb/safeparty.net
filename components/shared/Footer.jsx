@@ -51,7 +51,7 @@ const Footer = () => {
                     <li><Link href="/terms-conditions" className="hover:underline">Terms & Conditions</Link></li>
                     <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
                     <li><Link href="/contact" className="hover:underline">Contact Us</Link></li>
-                    <li><Link href="mailto:support@safeparty.com" className="hover:underline">Email support@safeparty.com</Link></li>
+                    <li><Link href="mailto:support@safeparty.net" className="hover:underline">Email support@safeparty.net</Link></li>
                   </ul>
                 </div>
 

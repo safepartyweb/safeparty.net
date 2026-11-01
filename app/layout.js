@@ -5,8 +5,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LeadConnectorWidget from "@/components/shared/LeadConnectorWidget";
-
+import ContactWidget from "@/components/shared/ContactWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +17,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata = {
   title: 'Safe Party',
   description: '',
@@ -27,7 +25,6 @@ export const metadata = {
   },
 };
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -35,16 +32,14 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
       >
         <AuthProvider>
-          {/* <ToastContainer /> */}
+          <ToastContainer />
           <Navbar />
           <main>
-            <LeadConnectorWidget />
             {children}
           </main>
           <Footer />
-          
+          <ContactWidget />
         </AuthProvider>
-        <ToastContainer />
       </body>
     </html>
   );
